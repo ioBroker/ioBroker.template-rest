@@ -4,9 +4,7 @@
 
 This adapter is a template for the creation of an ioBroker adapter. You do not need it, at least that you plan developing your own adapter.
 
-It includes both code running within iobroker and as vis widget. If you only plan to create a vis widget then you should use the [iobroker.vis-template](https://github.com/ioBroker/ioBroker.vis-template) instead.
-
-This is extension of ioBroker.template adapter with REST service.
+This is extension of [ioBroker.template](https://github.com/ioBroker/ioBroker.template) adapter with REST service.
 By default the WEB server will be started to serve HTTP GET/POST requests. It can be started as secure(https) or unsecure(http) and with authentication or without.
 
 Additionally is shown how to poll some other URL for JSON data and parse them.
