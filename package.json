@@ -1,0 +1,47 @@
+{
+  "name": "iobroker.template-rest",
+  "version": "0.1.0",
+  "description": "ioBroker template-rest Adapter",
+  "author": {
+    "name": "@@Author@@",
+    "email": "@@email@@"
+  },
+  "contributors": [
+    {
+      "name": "@@Author@@",
+      "email": "@@email@@"
+    }
+  ],
+  "homepage": "https://github.com/ioBroker/ioBroker.template-rest",
+  "license": "MIT",
+  "keywords": [
+    "ioBroker",
+    "template-rest",
+    "REST API"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ioBroker/ioBroker.template-rest"
+  },
+  "dependencies": {
+    "express": "^4.13.4",
+    "request": "^2.72.0"
+  },
+  "devDependencies": {
+      "grunt": "^0.4.5",
+      "grunt-replace": "^0.9.3",
+      "grunt-contrib-jshint": "^0.11.2",
+      "grunt-jscs": "^2.0.0",
+      "grunt-http": "^1.6.0",
+      "mocha": "^2.3.4",
+      "chai": "^3.4.1"
+  },
+  "main": "main.js",
+  "scripts": {
+    "test": "node node_modules/mocha/bin/mocha"
+  },
+  "bugs": {
+    "url": "https://github.com/ioBroker/ioBroker.template-rest/issues"
+  },
+  "readmeFilename": "README.md"
+}

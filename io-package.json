@@ -1,0 +1,55 @@
+{
+    "common": {
+        "name":                     "template-rest",
+        "version":                  "0.1.0",
+        "title":                    "Javascript/Node.js based template REST API adapter",
+        "desc":                     {
+           "en": "ioBroker template REST API Adapter",
+           "de": "ioBroker Template REST API Adapter",
+           "ru": "ioBroker Template REST API драйвер как образец"
+	    },
+        "news": {
+          "en": "initial checkin",
+          "de": "initial checkin",
+          "ru": "первая версия",
+          "0.0.9" :{
+            "en": "previous version",
+            "de": "vorherige Version",
+            "ru": "предыдущая версия"
+          },
+          "0.0.8" :{
+            "en": "older version (up to 5 versions)",
+            "de": "noch vorherige Version (bis zu 5 Versionen)",
+            "ru": "более предыдущая версия (до 5ти версий)"
+          }
+        },
+        "platform":                 "Javascript/Node.js",
+        "mode":                     "daemon",
+        "icon":                     "template-rest.png",
+        "enabled":                  true,
+	    "extIcon":                  "https://raw.githubusercontent.com/ioBroker/ioBroker.template-rest/master/admin/template-rest.png",
+	    "keywords":                 ["template-rest", "REST"],
+        "readme":                   "https://github.com/ioBroker/ioBroker.template-rest/blob/master/README.md",
+	    "loglevel":                 "info",
+        "type":                     "communication"
+    },
+    "native": {
+      "test1":                    true,
+      "test2":                    42,
+
+      "port":                     9090,
+      "auth":                     false,
+      "secure":                   false,
+      "bind":                     "0.0.0.0",
+      "defaultUser":              "admin",
+      "certPublic":               "defaultPublic",
+      "certPrivate":              "defaultPrivate",
+
+      "pollURL":                  "",
+      "interval":                 30000
+
+    },
+    "objects": [
+
+    ]
+}
