@@ -7,7 +7,6 @@ var states  = null;
 
 process.env.NO_PROXY = '127.0.0.1';
 
-return;
 describe('Test RESTful API', function() {
     before('Test RESTful API: Start js-controller', function (_done) {
         this.timeout(600000); // because of first install from npm
