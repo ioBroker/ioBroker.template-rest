@@ -100,11 +100,11 @@ module.exports = function (grunt) {
                 options: {
                     patterns: [
                         {
-                            match: /template-rest/g,
+                            match: /template\-rest/g,
                             replacement: newname
                         },
                         {
-                            match: /Template-rest/g,
+                            match: /Template\-rest/g,
                             replacement: newname ? (newname[0].toUpperCase() + newname.substring(1)) : 'Template-rest'
                         },
                         {
@@ -126,7 +126,9 @@ module.exports = function (grunt) {
                                  srcDir + 'LICENSE',
                                  srcDir + 'package.json',
                                  srcDir + 'README.md',
-                                 srcDir + 'io-package.json'
+                                 srcDir + 'io-package.json',
+                                 srcDir + 'main.js',
+                                 srcDir + 'Gruntfile.js'
                         ],
                         dest:    srcDir
                     },

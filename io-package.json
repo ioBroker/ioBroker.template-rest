@@ -2,16 +2,18 @@
     "common": {
         "name":                     "template-rest",
         "version":                  "0.1.0",
-        "title":                    "Javascript/Node.js based template REST API adapter",
+        "title":                    "Javascript/Node.js based template-rest adapter",
         "desc":                     {
-           "en": "ioBroker template REST API Adapter",
-           "de": "ioBroker Template REST API Adapter",
-           "ru": "ioBroker Template REST API драйвер как образец"
+           "en": "ioBroker template-rest Adapter",
+           "de": "ioBroker template-rest Adapter",
+           "ru": "ioBroker template-rest драйвер как образец"
 	    },
         "news": {
-          "en": "initial checkin",
-          "de": "initial checkin",
-          "ru": "первая версия",
+		  "0.1.0" :{
+            "en": "initial checkin",
+            "de": "initial checkin",
+            "ru": "первая версия"
+          },
           "0.0.9" :{
             "en": "previous version",
             "de": "vorherige Version",
