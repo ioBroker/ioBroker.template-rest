@@ -41,7 +41,7 @@
 
 /* jshint -W097 */// jshint strict:false
 /*jslint node: true */
-"use strict";
+'use strict';
 
 // you have to require the utils module and call adapter function
 var utils      = require(__dirname + '/lib/utils'); // Get common adapter utils
@@ -53,13 +53,14 @@ var request    = null; // will be initialized later if polling enabled
 // you have to call the adapter function and pass a options object
 // name has to be set and has to be equal to adapters folder name and main file name excluding extension
 // adapter will be restarted automatically every time as the configuration changed, e.g system.adapter.template.0
-var adapter = utils.adapter('template-rest');
+var adapter    = utils.adapter('template-rest');
+var LE         = require(utils.controllerDir + '/lib/letsencrypt.js');
 
 // REST server
-var webServer = null;
-var app       = null;
-var router    = null;
-var timer     = null;
+var webServer  = null;
+var app        = null;
+var router     = null;
+var timer      = null;
 
 // is called when adapter shuts down - callback has to be called under any circumstances!
 adapter.on('unload', function (callback) {
@@ -205,11 +206,7 @@ function initWebServer(settings) {
             }
         }
 
-        if (settings.secure) {
-            webServer = require('https').createServer(adapter.config.certificates, app);
-        } else {
-            webServer = require('http').createServer(app);
-        }
+        webServer = LE.createServer(app, adapter.config, adapter.config.certificates, adapter.config.leConfig, adapter.log);
 
         adapter.getPort(settings.port, function (port) {
             if (port != settings.port && !adapter.config.findNextPort) {
@@ -298,22 +295,10 @@ function main() {
     // try to load certificates
     if (adapter.config.secure) {
         // Load certificates
-        adapter.getForeignObject('system.certificates', function (err, obj) {
-            if (err || !obj ||
-                !obj.native.certificates ||
-                !adapter.config.certPublic ||
-                !adapter.config.certPrivate ||
-                !obj.native.certificates[adapter.config.certPublic] ||
-                !obj.native.certificates[adapter.config.certPrivate]
-            ) {
-                adapter.log.error('Cannot enable secure web server, because no certificates found: ' + adapter.config.certPublic + ', ' + adapter.config.certPrivate);
-            } else {
-                adapter.config.certificates = {
-                    key:  obj.native.certificates[adapter.config.certPrivate],
-                    cert: obj.native.certificates[adapter.config.certPublic]
-                };
-
-            }
+        // Load certificates
+        adapter.getCertificates(function (err, certificates, leConfig) {
+            adapter.config.certificates = certificates;
+            adapter.config.leConfig     = leConfig;
             initWebServer(adapter.config);
         });
     } else {

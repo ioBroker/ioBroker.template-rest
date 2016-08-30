@@ -33,7 +33,8 @@
 	    "keywords":                 ["template-rest", "REST"],
         "readme":                   "https://github.com/ioBroker/ioBroker.template-rest/blob/master/README.md",
 	    "loglevel":                 "info",
-        "type":                     "communication"
+        "type":                     "communication",
+		"dependencies":             [{"js-controller": ">=0.12.0"}]
     },
     "native": {
       "test1":                    true,
@@ -46,10 +47,14 @@
       "defaultUser":              "admin",
       "certPublic":               "defaultPublic",
       "certPrivate":              "defaultPrivate",
+      "certChained":              "",
 
       "pollURL":                  "",
-      "interval":                 30000
+      "interval":                 30000,
 
+      "leEnabled":                false,
+      "leUpdate":                 false,
+      "leCheckPort":              80
     },
     "objects": [
 
