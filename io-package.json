@@ -25,6 +25,9 @@
             "ru": "более предыдущая версия (до 5ти версий)"
           }
         },
+        "authors": [
+            "my Name <my@email.com>"
+        ],
         "platform":                 "Javascript/Node.js",
         "mode":                     "daemon",
         "icon":                     "template-rest.png",
