@@ -1,6 +1,6 @@
 ![Logo](admin/template-rest.png)
 # ioBroker.template-rest
-=================
+![Number of Installations](http://iobroker.live/badges/template-rest-installed.svg) ![Number of Installations](http://iobroker.live/badges/template-rest-stable.svg) =================
 
 This adapter is a template for the creation of an ioBroker adapter. You do not need it, at least that you plan developing your own adapter.
 
