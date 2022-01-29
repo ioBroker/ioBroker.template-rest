@@ -12,7 +12,7 @@ describe('Test RESTful API SSL', function() {
     before('Test RESTful API SSL: Start js-controller', function (_done) {
         this.timeout(600000); // because of first install from npm
         var brokerStarted   = false;
-        setup.setupController(function () {
+        setup.setupController(async function () {
             var config = setup.getAdapterConfig();
             // enable adapter
             config.common.enabled = true;
@@ -21,7 +21,7 @@ describe('Test RESTful API SSL', function() {
             config.native.auth = true;
             config.native.secure = true;
 
-            setup.setAdapterConfig(config.common, config.native);
+            await setup.setAdapterConfig(config.common, config.native);
 
             setup.startController(function (_objects, _states) {
                 objects = _objects;
