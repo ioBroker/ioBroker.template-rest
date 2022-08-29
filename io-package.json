@@ -43,6 +43,7 @@
     "readme": "https://github.com/ioBroker/ioBroker.template-rest/blob/master/README.md",
     "loglevel": "info",
     "type": "communication",
+    "compact": true,
     "dependencies": [
       {
         "js-controller": ">=0.12.0"
