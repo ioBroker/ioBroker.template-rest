@@ -1,65 +1,76 @@
 {
-    "common": {
-        "name":                     "template-rest",
-        "version":                  "0.1.0",
-        "title":                    "Javascript/Node.js based template-rest adapter",
-        "desc":                     {
-           "en": "ioBroker template-rest Adapter",
-           "de": "ioBroker template-rest Adapter",
-           "ru": "ioBroker template-rest драйвер как образец"
-	    },
-        "news": {
-		  "0.1.0" :{
-            "en": "initial checkin",
-            "de": "initial checkin",
-            "ru": "первая версия"
-          },
-          "0.0.9" :{
-            "en": "previous version",
-            "de": "vorherige Version",
-            "ru": "предыдущая версия"
-          },
-          "0.0.8" :{
-            "en": "older version (up to 5 versions)",
-            "de": "noch vorherige Version (bis zu 5 Versionen)",
-            "ru": "более предыдущая версия (до 5ти версий)"
-          }
-        },
-        "authors": [
-            "my Name <my@email.com>"
-        ],
-        "platform":                 "Javascript/Node.js",
-        "mode":                     "daemon",
-        "icon":                     "template-rest.png",
-        "enabled":                  true,
-	    "extIcon":                  "https://raw.githubusercontent.com/ioBroker/ioBroker.template-rest/master/admin/template-rest.png",
-	    "keywords":                 ["template-rest", "REST"],
-        "readme":                   "https://github.com/ioBroker/ioBroker.template-rest/blob/master/README.md",
-	    "loglevel":                 "info",
-        "type":                     "communication",
-		"dependencies":             [{"js-controller": ">=0.12.0"}]
+  "common": {
+    "name": "template-rest",
+    "version": "0.1.0",
+    "title": "Javascript/Node.js based template-rest adapter",
+    "titleLang": {
+        "en": "Javascript/Node.js based template-rest adapter"
     },
-    "native": {
-      "test1":                    true,
-      "test2":                    42,
-
-      "port":                     9090,
-      "auth":                     false,
-      "secure":                   false,
-      "bind":                     "0.0.0.0",
-      "defaultUser":              "admin",
-      "certPublic":               "defaultPublic",
-      "certPrivate":              "defaultPrivate",
-      "certChained":              "",
-
-      "pollURL":                  "",
-      "interval":                 30000,
-
-      "leEnabled":                false,
-      "leUpdate":                 false,
-      "leCheckPort":              80
+    "desc": {
+      "en": "ioBroker template-rest Adapter",
+      "de": "ioBroker template-rest Adapter",
+      "ru": "ioBroker template-rest драйвер как образец"
     },
-    "objects": [
-
-    ]
+    "news": {
+      "0.1.0": {
+        "en": "initial checkin",
+        "de": "initial checkin",
+        "ru": "первая версия"
+      },
+      "0.0.9": {
+        "en": "previous version",
+        "de": "vorherige Version",
+        "ru": "предыдущая версия"
+      },
+      "0.0.8": {
+        "en": "older version (up to 5 versions)",
+        "de": "noch vorherige Version (bis zu 5 Versionen)",
+        "ru": "более предыдущая версия (до 5ти версий)"
+      }
+    },
+    "authors": [
+      "my Name <my@email.com>"
+    ],
+    "platform": "Javascript/Node.js",
+    "mode": "daemon",
+    "icon": "template-rest.png",
+    "enabled": true,
+    "extIcon": "https://raw.githubusercontent.com/ioBroker/ioBroker.template-rest/master/admin/template-rest.png",
+    "keywords": [
+      "template-rest",
+      "REST"
+    ],
+    "readme": "https://github.com/ioBroker/ioBroker.template-rest/blob/master/README.md",
+    "loglevel": "info",
+    "type": "communication",
+    "dependencies": [
+      {
+        "js-controller": ">=0.12.0"
+      }
+    ],
+    "adminUI": {
+      "config": "json"
+    },
+    "connectionType": "local",
+    "dataSource": "push"
+  },
+  "native": {
+    "test1": true,
+    "test2": 42,
+    "port": 9090,
+    "auth": false,
+    "secure": false,
+    "bind": "0.0.0.0",
+    "defaultUser": "admin",
+    "certPublic": "defaultPublic",
+    "certPrivate": "defaultPrivate",
+    "certChained": "",
+    "pollURL": "",
+    "interval": 30000,
+    "leEnabled": false,
+    "leUpdate": false,
+    "leCheckPort": 80
+  },
+  "objects": [
+  ]
 }

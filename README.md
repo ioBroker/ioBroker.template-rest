@@ -1,13 +1,14 @@
 ![Logo](admin/template-rest.png)
 # ioBroker.template-rest
-![Number of Installations](http://iobroker.live/badges/template-rest-installed.svg) ![Number of Installations](http://iobroker.live/badges/template-rest-stable.svg) =================
+
+![Number of Installations](http://iobroker.live/badges/template-rest-installed.svg) ![Number of Installations](http://iobroker.live/badges/template-rest-stable.svg)
 
 This adapter is a template for the creation of an ioBroker adapter. You do not need it, at least that you plan developing your own adapter.
 
 This is extension of [ioBroker.template](https://github.com/ioBroker/ioBroker.template) adapter with REST service.
-By default the WEB server will be started to serve HTTP GET/POST requests. It can be started as secure(https) or unsecure(http) and with authentication or without.
+By default, the WEB server will be started to serve HTTP GET/POST requests. It can be started as secure(https) or unsecure(http) and with authentication or without.
 
-Additionally is shown how to poll some other URL for JSON data and parse them.
+Additionally, is shown how to poll some other URL for JSON data and parse them.
 
 ##Steps 
 1. download and unpack this packet from github ```https://github.com/ioBroker/ioBroker.template/archive/master.zip```
@@ -69,7 +70,7 @@ http://ip:9090/api/plain/system.adapter.admin.0.memHeapTotal
 ## License
 The MIT License (MIT)
 
-Copyright (c) 2017 @@Author@@ <@@email@@>
+Copyright (c) 2017-2022 @@Author@@ <@@email@@>
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal

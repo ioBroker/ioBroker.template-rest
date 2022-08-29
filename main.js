@@ -22,16 +22,16 @@
  *      "native": {                                     // the native object is available via adapter.config in your adapters code - use it for configuration
  *          "test1": true,
  *          "test2": 42,
- *          
+ *
  *          "port":                     9090,           // port where the REST service will be started. It should has name "port", because it can be changed from console.
- *          "auth":                     false,          // if basic authentication is required. If enabled, the secure connection should be used.  
+ *          "auth":                     false,          // if basic authentication is required. If enabled, the secure connection should be used.
  *          "secure":                   false,          // If SSL communication must be used. Should has the name "secure", because it can be changed from console.
  *          "bind":                     "0.0.0.0",      // Specific address, where the server will be started. "0.0.0.0" means that it will be available for all addresses. Should has the name "bind", because it can be changed from console.
  *          "defaultUser":              "admin",        // If authentication is disabled, here can be specified as which user the requests will be done to iobroker DB.
- *          "certPublic":               "defaultPublic",// Required for SSL communication: name of some public certificate from iobroker DB 
+ *          "certPublic":               "defaultPublic",// Required for SSL communication: name of some public certificate from iobroker DB
  *          "certPrivate":              "defaultPrivate"// Required for SSL communication: name of some private key from iobroker DB
- *          
- *          "pollURL":                  "",             // Request all 30 seconds the JSON from this URL, parse it and store in ioBroker            
+ *
+ *          "pollURL":                  "",             // Request all 30 seconds the JSON from this URL, parse it and store in ioBroker
  *          "interval":                 30000           // polling interval
  *      }
  *  }
@@ -44,82 +44,91 @@
 'use strict';
 
 // you have to require the utils module and call adapter function
-var utils = require('@iobroker/adapter-core'); // Get common adapter utils
+const utils    = require('@iobroker/adapter-core'); // Get common adapter utils
 
 // load additional libraries
-var express    = require('express');        // call express
-var request    = null; // will be initialized later if polling enabled
+const express  = require('express');        // call express
+let axios      = null; // will be initialized later if polling enabled
 
 // you have to call the adapter function and pass a options object
 // name has to be set and has to be equal to adapters folder name and main file name excluding extension
 // adapter will be restarted automatically every time as the configuration changed, e.g system.adapter.template.0
-var adapter    = utils.Adapter('template-rest');
-var LE         = require(utils.controllerDir + '/lib/letsencrypt.js');
+let adapter    = null;
+const LE       = require(`${utils.controllerDir}/lib/letsencrypt.js`);
+const adapterName = require('./package.json').name.split('.').pop();
 
 // REST server
-var webServer  = null;
-var app        = null;
-var router     = null;
-var timer      = null;
+let webServer  = null;
+let app        = null;
+let router     = null;
+let timer      = null;
 
-// is called when adapter shuts down - callback has to be called under any circumstances!
-adapter.on('unload', function (callback) {
-    try {
-        adapter.log.info('cleaned everything up...');
-        if (webServer) {
-            webServer.close();
-            webServer = null;
+function startAdapter(options) {
+    options = options || {};
+    Object.assign(options, {
+        name: adapterName, // adapter name
+    });
+    adapter = new utils.Adapter(options);
+
+    // is called when adapter shuts down - callback has to be called under any circumstances!
+    adapter.on('unload', callback => {
+        try {
+            adapter.log.info('cleaned everything up...');
+            if (webServer) {
+                webServer.close();
+                webServer = null;
+            }
+            if (timer) clearInterval(timer);
+            callback();
+        } catch (e) {
+            callback();
         }
-        if (timer) clearInterval(timer);
-        callback();
-    } catch (e) {
-        callback();
-    }
-});
+    });
 
-// is called if a subscribed object changes
-adapter.on('objectChange', function (id, obj) {
-    // Warning, obj can be null if it was deleted
-    adapter.log.info('objectChange ' + id + ' ' + JSON.stringify(obj));
-});
+    // is called if a subscribed object changes
+    adapter.on('objectChange', (id, obj) => {
+        // Warning, obj can be null if it was deleted
+        adapter.log.info(`objectChange ${id} ${JSON.stringify(obj)}`);
+    });
 
-// is called if a subscribed state changes
-adapter.on('stateChange', function (id, state) {
-    // Warning, state can be null if it was deleted
-    adapter.log.info('stateChange ' + id + ' ' + JSON.stringify(state));
+    // is called if a subscribed state changes
+    adapter.on('stateChange', (id, state) => {
+        // Warning, state can be null if it was deleted
+        adapter.log.info(`stateChange ${id} ${JSON.stringify(state)}`);
 
-    // you can use the ack flag to detect if it is status (true) or command (false)
-    if (state && !state.ack) {
-        adapter.log.info('ack is not set!');
-    }
-});
-
-// Some message was sent to adapter instance over message box. Used by email, pushover, text2speech, ...
-adapter.on('message', function (obj) {
-    if (typeof obj == 'object' && obj.message) {
-        if (obj.command == 'send') {
-            // e.g. send email or pushover or whatever
-            console.log('send command');
-
-            // Send response in callback if required
-            if (obj.callback) adapter.sendTo(obj.from, obj.command, 'Message received', obj.callback);
+        // you can use the ack flag to detect if it is status (true) or command (false)
+        if (state && !state.ack) {
+            adapter.log.info('ack is not set!');
         }
-    }
-});
+    });
 
-// is called when databases are connected and adapter received configuration.
-// start here!
-adapter.on('ready', function () {
-    main();
-});
+    // Some message was sent to adapter instance over message box. Used by email, pushover, text2speech, ...
+    adapter.on('message', obj => {
+        if (typeof obj == 'object' && obj.message) {
+            if (obj.command === 'send') {
+                // e.g. send email or pushover or whatever
+                console.log('send command');
+
+                // Send response in callback if required
+                if (obj.callback) adapter.sendTo(obj.from, obj.command, 'Message received', obj.callback);
+            }
+        }
+    });
+
+    // is called when databases are connected and adapter received configuration.
+    // start here!
+    adapter.on('ready', () => main());
+
+    return adapter;
+}
 
 function addRoutes(_router) {
     // test route to make sure everything is working (accessed at GET http://localhost:9090/api)
-    _router.get('/', function (req, res) {
+    _router.get('/', (req, res) => {
         res.json({message: 'Welcome to our JSON REST api!'});
     });
 
-    _router.get('/plain/', function(req, res) {
+    _router.get('/plain/', (req, res) => {
         res.send('Welcome to our text REST api!');
     });
 
@@ -128,7 +137,7 @@ function addRoutes(_router) {
     _router.route('/plain/:id')
         // get the bear with that id (accessed at GET http://localhost:8080/api/plain/:id)
         .get(function (req, res) {
-            adapter.getForeignState(req.params.id, {user: req.user}, function (err, state) {
+            adapter.getForeignState(req.params.id, {user: req.user}, (err, state) => {
                 if (err) {
                     res.status(500).send(err);
                 } else if (!state) {
@@ -139,7 +148,7 @@ function addRoutes(_router) {
             });
         })// create a handler for post (accessed at POST http://localhost:8080/api/bears)
         .post(function (req, res) {
-            adapter.setForeignState(req.params.id, req.body, {user: req.user}, function (err, state) {
+            adapter.setForeignState(req.params.id, req.body, {user: req.user}, (err, state) => {
                 if (err) {
                     res.status(500).send(err);
                 } else if (!state) {
@@ -153,15 +162,14 @@ function addRoutes(_router) {
     // handler for get over JSON
     _router.route('/:id')
         // get the bear with that id (accessed at GET http://localhost:8080/api/plain/:id)
-        .get(function (req, res) {
-            adapter.getForeignState(req.params.id, {user: req.user}, function (err, state) {
+        .get((req, res) =>
+            adapter.getForeignState(req.params.id, {user: req.user}, (err, state) => {
                 if (err) {
                     res.status(500).send({error: err});
                 } else {
                     res.json(state);
                 }
-            });
-        });
+            }));
 }
 
 function initWebServer(settings) {
@@ -171,15 +179,15 @@ function initWebServer(settings) {
     // install authentication
     app.get('/', function (req, res) {
         if (settings.auth) {
-            var b64auth = (req.headers.authorization || '').split(' ')[1] || '';
-            var loginPass = new Buffer(b64auth, 'base64').toString().split(':');
-            var login     = loginPass[0];
-            var password  = loginPass[1];
+            const b64auth = (req.headers.authorization || '').split(' ')[1] || '';
+            const loginPass = Buffer.from(b64auth, 'base64').toString().split(':');
+            const login     = loginPass[0];
+            const password  = loginPass[1];
 
             // Check in ioBroker user and password
-            adapter.checkPassword(login, password, function (result) {
+            adapter.checkPassword(login, password, result => {
                 if (!result) {
-                    adapter.log.error('Wrong user or password: ' + login);
+                    adapter.log.error(`Wrong user or password: ${login}`);
                     res.set('WWW-Authenticate', 'Basic realm="nope"');
                     res.status(401).send('You shall not pass.');
                 } else {
@@ -208,14 +216,13 @@ function initWebServer(settings) {
 
         webServer = LE.createServer(app, adapter.config, adapter.config.certificates, adapter.config.leConfig, adapter.log);
 
-        adapter.getPort(settings.port, function (port) {
+        adapter.getPort(settings.port, (!settings.bind || settings.bind === '0.0.0.0') ? undefined : settings.bind || undefined, port => {
             if (port != settings.port && !adapter.config.findNextPort) {
-                adapter.log.error('port ' + settings.port + ' already in use');
+                adapter.log.error(`port ${settings.port} already in use`);
                 process.exit(1);
             }
-            webServer.listen(port, settings.bind, function() {
-                adapter.log.info('Server listening on http' + (settings.secure ? 's' : '') + '://' + settings.bind + ':' + port);
-            });
+            webServer.listen(port, (!settings.bind || settings.bind === '0.0.0.0') ? undefined : settings.bind || undefined, () =>
+                adapter.log.info(`Server listening on http${settings.secure ? 's' : ''}://${settings.bind}:${port}`));
         });
     } else {
         adapter.log.error('port missing');
@@ -224,31 +231,21 @@ function initWebServer(settings) {
 }
 
 function pollData() {
-    // you can read about module "request" here: https://www.npmjs.com/package/request
-    request = request || require('request'); // load library
-    request(adapter.config.pollURL, function (error, response, body) {
-        if (error || response.statusCode !== 200) {
-            adapter.log.error(error || response.statusCode);
-        } else {
+    // you can read about module "axios" here: https://www.npmjs.com/package/axios
+    axios = axios || require('axios'); // load library
+    axios(adapter.config.pollURL)
+        .then(response => {
             // try to parse answer
-            try {
-                var data = JSON.parse(body);
-                // do something with data
-                adapter.log.info(JSON.parse(data));
-                
-            } catch (e) {
-                adapter.log.error('Cannot parse answer');
-            }
-        }
-    });
+            adapter.log.info(JSON.stringify(response.data));
+        })
+        .catch(error => adapter.log.error(`Cannot read data from ${adapter.config.pollURL}: ${error}`));
 }
 
 function main() {
-
-    // The adapters config (in the instance object everything under the attribute "native") is accessible via
+    // The adapter's config (in the instance object everything under the attribute "native") is accessible via
     // adapter.config:
-    adapter.log.info('config test1: ' + adapter.config.test1);
-    adapter.log.info('config test1: ' + adapter.config.test2);
+    adapter.log.info(`config test1: ${adapter.config.test1}`);
+    adapter.log.info(`config test1: ${adapter.config.test2}`);
 
     /**
      *
@@ -273,7 +270,6 @@ function main() {
     // in this template all states changes inside the adapters namespace are subscribed
     adapter.subscribeStates('*');
 
-
     /**
      *   setState examples
      *
@@ -291,12 +287,10 @@ function main() {
     // same thing, but the state is deleted after 30s (getState will return null afterwards)
     adapter.setState('testVariable', {val: true, ack: true, expire: 30});
 
-
     // try to load certificates
     if (adapter.config.secure) {
         // Load certificates
-        // Load certificates
-        adapter.getCertificates(function (err, certificates, leConfig) {
+        adapter.getCertificates((err, certificates, leConfig) => {
             adapter.config.certificates = certificates;
             adapter.config.leConfig     = leConfig;
             initWebServer(adapter.config);
@@ -315,4 +309,12 @@ function main() {
         // poll every x milliseconds
         timer = setInterval(pollData, adapter.config.interval);
     }
+}
+
+// If started as allInOne/compact mode => return function to create instance
+if (module && module.parent) {
+    module.exports = startAdapter;
+} else {
+    // or start the instance directly
+    startAdapter();
 }
